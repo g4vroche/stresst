@@ -9,5 +9,8 @@
     "node-fs": "~0.1.7",
     "request": "~2.51.0",
     "cli-color": "~0.3.2"
+  },
+  "devDependencies": {
+    "jshint": "~2.8.0"
   }
 }

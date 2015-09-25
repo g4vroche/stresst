@@ -1,4 +1,9 @@
 
+
+(function(){
+
+	"use strict";
+	
 var ds = require('./datastore.js');
 
 
@@ -7,21 +12,22 @@ exports.httpStatusIs = function( expected ){
 	return function( response, body ){
 		expected = ds.getValue( expected );
 
-		var code = parseInt(response.statusCode),
+		var code = parseInt(response.statusCode, 10),
 			result = code  === expected;
 
 		if ( ! result ){
-			this.debug = {expected: expected, actual: code, data: body}
+			/*jshint validthis:true */
+			this.debug = {expected: expected, actual: code, data: body};
 		}
 
 		return result;
-	}
+	};
 };
 
 
 exports.isJSON = function( response, body ){
 	try{
-		return ( typeof JSON.parse( body ) == 'object' );	
+		return ( typeof JSON.parse( body ) == 'object' );
 	} catch(e){
 		this.debug = {body: body};
 		return false;
@@ -62,8 +68,8 @@ exports.JsonNotEqual = function( path, unexpected ){
 			this.debug = {unexpected: unexpected, actual: actual, data: oBody};
 		}
 
-		return result;		
-	}
+		return result;
+	};
 };
 
 exports.JsonHas = function( path  ){
@@ -120,7 +126,7 @@ exports.ArrayLength = function( length, path ){
 			this.debug = {expected: length, actual: value.length, data: value};
 			return false;
 		}
-	}
+	};
 };
 
 exports.JsonContains = function( path, value ){
@@ -131,7 +137,7 @@ exports.JsonContains = function( path, value ){
 
 		data = ds.getStorableVar(data, path);
 
-		for ( key in data ){
+		for ( var key in data ){
 			if ( data[key] == value ){
 				return true;
 			}
@@ -139,7 +145,7 @@ exports.JsonContains = function( path, value ){
 
 		this.debug = {expected: value, actual: null, data: data};
 		return false;
-	}
+	};
 };
 
 exports.JsonNotContains = function( path, value ){
@@ -148,12 +154,14 @@ exports.JsonNotContains = function( path, value ){
 		value = ds.getValue( value );
 		data = ds.getStorableVar(data, path);
 
-		for ( key in data ){
+		for ( var key in data ){
 			if ( data[key] == value ){
 				this.debug = {expected: value, actual: value, data: data};
 				return false;
 			}
 		}
 		return true;
-	}
+	};
 };
+
+}());

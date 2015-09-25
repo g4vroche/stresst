@@ -1,10 +1,15 @@
+
+(function(){
+
+	"use strict";
+
 var DATA = {};
 exports.getData			= getData;
 exports.getValue		= getValue;
-exports.store 			= store;
+exports.store			= store;
 exports.getStorableVar	= getStorableVar;
 exports.setStorableVar	= setStorableVar;
-exports.setFragment 	= setFragment;
+exports.setFragment		= setFragment;
 
 
 function getData(key){
@@ -30,8 +35,8 @@ function store(req, response, body){
 
 	for(var i=0; i<req.store.length; i++){
 
-		setData( req.store[i].dest, getStorableVar(data, req.store[i].src) )
-	}	
+		setData( req.store[i].dest, getStorableVar(data, req.store[i].src) );
+	}
 }
 
 function getStorableVar(src, path){
@@ -42,7 +47,7 @@ function getStorableVar(src, path){
 	}
 
 	try {
-		eval('val = src["'+ path.split('.').join('"]["')+'"]');
+		eval('val = src["'+ path.split('.').join('"]["')+'"]');/* jshint ignore:line */
 	} catch(e){
 		val = undefined;
 	}
@@ -52,7 +57,7 @@ function getStorableVar(src, path){
 
 function setStorableVar(dest, path, value){
 	var parts = path.split('.'),
-	    cumul = [];
+		cumul = [];
 
 	for(var i in parts){
 		cumul.push(parts[i]);
@@ -70,8 +75,10 @@ function setStorableVar(dest, path, value){
 function setFragment(dest, parts, value){
 
 	var code = 'dest["'+ parts.join('"]["')+'"] = value;';
-
-	eval( code );  // jshint ignore:line
+	
+	eval( code );/* jshint ignore:line */
 
 	return value;
 }
+
+}());

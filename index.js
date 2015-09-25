@@ -1,4 +1,8 @@
 
+(function(){
+
+"use strict";
+
 var ds      = require('./datastore.js');
 var request = require('request');
 var clc     = require('cli-color');
@@ -63,6 +67,7 @@ function runTestPlan(plan, output, next){
 	var j=0;
 
 	if( plan.prepare ){
+		/*jshint validthis:true */
 		plan.prepare.call(this);
 	}
 
@@ -78,9 +83,8 @@ function runTestPlan(plan, output, next){
 		}
 
 		if( next ){
-			next();			
+			next();
 		}
-
 	});
 }
 
@@ -89,7 +93,7 @@ function runTestPlan(plan, output, next){
 
 function runTest(plan, pointer, output, finalCallback){
 
-	test = plan.tests[pointer];
+	var test = plan.tests[pointer];
 
 	if ( typeof(test.data) === 'function'){
 		test.data = test.data();
@@ -111,24 +115,24 @@ function runTest(plan, pointer, output, finalCallback){
 		test.waitAfter = 0;
 	}
 
-	delayAfter = function(plan, pointer, output, callback, finalCallback){
+	var delayAfter = function(plan, pointer, output, callback, finalCallback){
 		if ( test.waitAfter ){
 			output.write('Waiting '+ test.waitAfter +'s');
 		}
 		setTimeout(function(){
 			runTest(plan, pointer, output, finalCallback);
 		}, test.waitAfter*1000);
-	}
+	};
 
-	delayBefore = function(plan, pointer, output, callback, finalCallback){
+	var delayBefore = function(plan, pointer, output, callback, finalCallback){
 		if ( test.waitBefore ){
 			output.write('Waiting '+ test.waitBefore +'s');
 		}
 		executeHTTPTest(plan, test, pointer, output, callback, finalCallback);
-	}
+	};
 
 	setTimeout( function(){
-		delayBefore(plan, pointer, output, delayAfter, finalCallback)
+		delayBefore(plan, pointer, output, delayAfter, finalCallback);
 	}, test.waitBefore*1000);
 
 }
@@ -136,7 +140,7 @@ function runTest(plan, pointer, output, finalCallback){
 function executeHTTPTest( plan, test, pointer, output, callback, finalCallback ){
 
 	var params = {
-		url: plan.base_uri + test.uri, 
+		url: plan.base_uri + test.uri,
 		method: 'GET',
 		jar: true,
 		rejectUnauthorized: false
@@ -191,7 +195,7 @@ function executeHTTPTest( plan, test, pointer, output, callback, finalCallback )
 
 		
 		if ( test.store ){
-			ds.store(test, response, body);	
+			ds.store(test, response, body);
 		}
 		
 		saveResults(test);
@@ -209,3 +213,5 @@ function executeHTTPTest( plan, test, pointer, output, callback, finalCallback )
 	});
 }
 
+
+}());
