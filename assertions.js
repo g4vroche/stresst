@@ -50,7 +50,7 @@
 			expected = utils.getValue( expected );
 
 			var oBody = JSON.parse(body);
-			var actual = ds.getPathValue(oBody, path);
+			var actual = utils.getPathValue(oBody, path);
 
 			var result = ( actual === expected );
 
@@ -74,7 +74,7 @@
 			unexpected = utils.getValue( unexpected );
 		
 			var oBody = JSON.parse(body);
-			var actual = ds.getPathValue(oBody, path);
+			var actual = utils.getPathValue(oBody, path);
 
 			var result = ( actual !== unexpected );
 
@@ -96,10 +96,10 @@
 		return function( response, body ){
 
 			var oBody = JSON.parse(body);
-			var result = ds.getPathValue(oBody, path);
+			var result = utils.getPathValue(oBody, path);
 
 			if( result === undefined ){
-				this.debug = {expected: path, found: ds.getPathValue(oBody, path), data: oBody};
+				this.debug = {expected: path, found: utils.getPathValue(oBody, path), data: oBody};
 				return false;
 			}
 
@@ -121,7 +121,7 @@
 			expected = utils.getValue( expected );
 
 			var oBody = JSON.parse(body);
-			var value = ds.getPathValue(oBody, path);
+			var value = utils.getPathValue(oBody, path);
 
 			var actual = typeof(value);
 			var result = ( actual === expected );
@@ -148,7 +148,7 @@
 			var value = JSON.parse(body);
 
 			if ( path ) {
-				value = ds.getPathValue(value, path);
+				value = utils.getPathValue(value, path);
 			}
 
 			if (value.length === length ) {
@@ -171,7 +171,7 @@
 			var data = JSON.parse(body);
 			var value = utils.getValue( value );
 
-			data = ds.getPathValue(data, path);
+			data = utils.getPathValue(data, path);
 
 			for ( var key in data ){
 				if ( data[key] == value ){
@@ -195,7 +195,7 @@
 			var data = JSON.parse(body);
 			var value = utils.getValue( value );
 			
-			data = ds.getPathValue(data, path);
+			data = utils.getPathValue(data, path);
 
 			for ( var key in data ){
 				if ( data[key] == value ){

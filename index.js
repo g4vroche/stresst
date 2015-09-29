@@ -146,7 +146,7 @@ function store(test, body){
 	var data = JSON.parse(body);
 
 	for(var i=0; i<test.store.length; i++){
-		ds.setData( test.store[i].dest, ds.getPathValue(data, test.store[i].src) );
+		ds.setData( test.store[i].dest, utils.getPathValue(data, test.store[i].src) );
 	}
 }
 
