@@ -5,6 +5,7 @@
 
 var ds      = require('./datastore.js');
 var request = require('request');
+var utils	= require('./utils.js');
 var clc     = require('cli-color');
 var	RESULTS = {endpoints:{}, endpointscount:0, calls:0, asserts:0, success: true};
 var suite_file = process.argv[2];
@@ -145,7 +146,7 @@ function store(test, body){
 	var data = JSON.parse(body);
 
 	for(var i=0; i<test.store.length; i++){
-		ds.setData( test.store[i].dest, ds.getStorableVar(data, test.store[i].src) );
+		ds.setData( test.store[i].dest, ds.getPathValue(data, test.store[i].src) );
 	}
 }
 

@@ -3,6 +3,7 @@
 	"use strict";
 
 	var ds = require('./datastore.js');
+	var utils = require('./utils.js');
 
 
 	/**
@@ -12,7 +13,7 @@
 	exports.httpStatusIs = function( expected ){
 
 		return function( response, body ){
-			expected = ds.getValue( expected );
+			expected = utils.getValue( expected );
 
 			var code = parseInt(response.statusCode, 10),
 				result = code  === expected;
@@ -46,10 +47,10 @@
 	exports.JsonEqual = function( path, expected  ){
 			
 		return function( response, body ){
-			expected = ds.getValue( expected );
+			expected = utils.getValue( expected );
 
 			var oBody = JSON.parse(body);
-			var actual = ds.getStorableVar(oBody, path);
+			var actual = ds.getPathValue(oBody, path);
 
 			var result = ( actual === expected );
 
@@ -70,10 +71,10 @@
 	 */
 	exports.JsonNotEqual = function( path, unexpected ){
 		return function( response, body ){
-			unexpected = ds.getValue( unexpected );
+			unexpected = utils.getValue( unexpected );
 		
 			var oBody = JSON.parse(body);
-			var actual = ds.getStorableVar(oBody, path);
+			var actual = ds.getPathValue(oBody, path);
 
 			var result = ( actual !== unexpected );
 
@@ -95,10 +96,10 @@
 		return function( response, body ){
 
 			var oBody = JSON.parse(body);
-			var result = ds.getStorableVar(oBody, path);
+			var result = ds.getPathValue(oBody, path);
 
 			if( result === undefined ){
-				this.debug = {expected: path, found: ds.getStorableVar(oBody, path), data: oBody};
+				this.debug = {expected: path, found: ds.getPathValue(oBody, path), data: oBody};
 				return false;
 			}
 
@@ -117,10 +118,10 @@
 	exports.JsonType = function( path, expected  ){
 
 		return function( response, body ){
-			expected = ds.getValue( expected );
+			expected = utils.getValue( expected );
 
 			var oBody = JSON.parse(body);
-			var value = ds.getStorableVar(oBody, path);
+			var value = ds.getPathValue(oBody, path);
 
 			var actual = typeof(value);
 			var result = ( actual === expected );
@@ -147,7 +148,7 @@
 			var value = JSON.parse(body);
 
 			if ( path ) {
-				value = ds.getStorableVar(value, path);
+				value = ds.getPathValue(value, path);
 			}
 
 			if (value.length === length ) {
@@ -168,9 +169,9 @@
 	exports.JsonContains = function( path, value ){
 		return function( response, body ){
 			var data = JSON.parse(body);
-			var value = ds.getValue( value );
+			var value = utils.getValue( value );
 
-			data = ds.getStorableVar(data, path);
+			data = ds.getPathValue(data, path);
 
 			for ( var key in data ){
 				if ( data[key] == value ){
@@ -192,9 +193,9 @@
 	exports.JsonNotContains = function( path, value ){
 		return function( response, body ){
 			var data = JSON.parse(body);
-			var value = ds.getValue( value );
+			var value = utils.getValue( value );
 			
-			data = ds.getStorableVar(data, path);
+			data = ds.getPathValue(data, path);
 
 			for ( var key in data ){
 				if ( data[key] == value ){
