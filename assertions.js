@@ -12,7 +12,7 @@
 	exports.httpStatusIs = function( expected ){
 
 		return function( response, body ){
-			expectedStatus = ds.getValue( expected );
+			expected = ds.getValue( expected );
 
 			var code = parseInt(response.statusCode, 10),
 				result = code  === expected;
@@ -144,7 +144,6 @@
 	exports.ArrayLength = function( length, path ){
 
 		return function( response, body ){
-			var length = ds.getValue( length );
 			var value = JSON.parse(body);
 
 			if ( path ) {
