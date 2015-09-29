@@ -137,6 +137,18 @@ function runTest(plan, pointer, output, finalCallback){
 
 }
 
+
+
+
+function store(test, body){
+
+	var data = JSON.parse(body);
+
+	for(var i=0; i<test.store.length; i++){
+		ds.setData( test.store[i].dest, ds.getStorableVar(data, test.store[i].src) );
+	}
+}
+
 function executeHTTPTest( plan, test, pointer, output, callback, finalCallback ){
 
 	var params = {
@@ -195,7 +207,7 @@ function executeHTTPTest( plan, test, pointer, output, callback, finalCallback )
 
 		
 		if ( test.store ){
-			ds.store(test, response, body);
+			store(test, body);
 		}
 		
 		saveResults(test);
