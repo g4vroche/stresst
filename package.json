@@ -1,6 +1,6 @@
 {
-  "name": "trest",
-  "version": "0.0.2",
+  "name": "strest",
+  "version": "1.0.0",
   "private": false,
   "scripts": {
     "start": "node test.js"
