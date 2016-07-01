@@ -10,9 +10,20 @@
    * Checks status code
    * @param int expected A HTTP status code
    */
-  exports.httpStatusIs = function( expected ){
+ exports.httpStatusIs = httpStatusIs;
+
+
+function setName(test, name){
+  if(!test.name) {
+    test.name = name;
+  }
+}
+
+ function httpStatusIs( expected ){
 
     return function( response, body ){
+
+      setName(this, "HTTP status code is «"+ expected+"»");
       expected = utils.getValue( expected );
 
       var code = parseInt(response.statusCode, 10),
@@ -28,12 +39,18 @@
   };
 
 
-  exports.isJSON = function( response, body ){
-    try{
-      return ( typeof JSON.parse( body ) == 'object' );
-    } catch(e){
-      this.debug = {body: body};
-      return false;
+  exports.isJSON = function(){
+
+    return function( response, body ){
+
+      setName(this, "body is a JSON object");
+
+      try{
+        return ( typeof JSON.parse( body ) == 'object' );
+      } catch(e){
+        this.debug = {body: body};
+        return false;
+      }
     }
   };
 
@@ -44,9 +61,11 @@
    *  eg: myobject.property.sub_property
    * @param Mixed expected
    */
-  exports.JsonEqual = function( path, expected  ){
+  exports.isEqual = function( path, expected  ){
       
     return function( response, body ){
+      setName(this, "["+ path+"] is equal to «"+ expected.toString()+"»")
+
       expected = utils.getValue( expected );
 
       var oBody = JSON.parse(body);
@@ -69,8 +88,10 @@
    *  eg: myobject.property.sub_property
    * @param Mixed unexpected
    */
-  exports.JsonNotEqual = function( path, unexpected ){
+  exports.isNotEqual = function( path, unexpected ){
     return function( response, body ){
+      setName(this, "["+ path+"] is not equal to «"+ expected.toString()+"»")
+
       unexpected = utils.getValue( unexpected );
     
       var oBody = JSON.parse(body);
@@ -91,9 +112,10 @@
    * (even if the value is null or false)
    * @param String path
    */
-  exports.JsonHas = function( path  ){
+  exports.hasKey = function( path  ){
 
     return function( response, body ){
+      setName(this, "has key «"+ path+"»" );
 
       var oBody = JSON.parse(body);
       var result = utils.getPathValue(oBody, path);
@@ -115,9 +137,11 @@
    * @param String type String reprensentation of the type
    * @TODO Rename this assertion ?
    */
-  exports.JsonType = function( path, expected  ){
+  exports.isOfType = function( path, expected  ){
 
     return function( response, body ){
+      setName(this, "["+ path+"] is of type «"+ expected+"»");
+
       expected = utils.getValue( expected );
 
       var oBody = JSON.parse(body);
@@ -137,14 +161,16 @@
 
   /**
    * Checks array length...
-   * @param Int length
    * @param String path
-   * @TODO : Parameters order doesn't match others assertions
+   * @param Int length
    * @TODO Rename this assertion ?
    */
-  exports.ArrayLength = function( length, path ){
+  exports.arrayLengthIs = function(path, length){
 
     return function( response, body ){
+
+      setName(this, "length of ["+ path+"] is equal to «"+ expected+"»");
+
       var value = JSON.parse(body);
 
       if ( path ) {
@@ -166,8 +192,11 @@
    * @param Mixed value
    * @TODO Rename this assertion ?
    */
-  exports.JsonContains = function( path, value ){
+  exports.arrayHasValue = function( path, value ){
+
     return function( response, body ){
+      setName(this, "["+ path+"] has value «"+ expected.toString()+"»");
+
       var data = JSON.parse(body);
       var value = utils.getValue( value );
 
@@ -190,8 +219,9 @@
    * @param Mixed value
    * @TODO Rename this assertion ?
    */
-  exports.JsonNotContains = function( path, value ){
+  exports.arrayDontHaveValue = function( path, value ){
     return function( response, body ){
+      setName(this, "["+ path+"] don't have value «"+ expected.toString()+"»");
       var data = JSON.parse(body);
       var value = utils.getValue( value );
       

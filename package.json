@@ -5,6 +5,9 @@
   "scripts": {
     "start": "node test.js"
   },
+  "bin": {
+    "stresst": "./bin/stresst"
+  },
   "dependencies": {
     "node-fs": "~0.1.7",
     "request": "~2.51.0",

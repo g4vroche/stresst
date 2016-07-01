@@ -7,14 +7,21 @@ var ds      = require('./datastore.js');
 var request = require('request');
 var utils  = require('./utils.js');
 var clc     = require('cli-color');
-var  RESULTS = {endpoints:{}, endpointscount:0, calls:0, asserts:0, success: true};
+var _results = {
+  endpoints:{}, 
+  endpointscount:0, 
+  calls:0, 
+  asserts:0, 
+  success: true
+};
 var suite_file = process.argv[2];
 
 
 
-exports.run     = runTestPlan;
-exports.asserts = require('./assertions.js');
-exports.ds      = ds;
+exports.run = runTestPlan;
+exports.that = exports.if = require('./assertions.js');
+exports.getDate = ds.getData;
+exports.setDate = ds.setData;
 
 exports.outputJSON = require('./output').json;
 exports.outputCli = require('./output').cli;
@@ -43,23 +50,23 @@ function assertions(test, response, body ){
 
 
 
-function saveResults( test ){
-  if ( !RESULTS.endpoints[test.uri] ){
-    RESULTS.endpoints[test.uri] = true;
-    RESULTS.endpointscount++;
+function save_results( test ){
+  if ( !_results.endpoints[test.uri] ){
+    _results.endpoints[test.uri] = true;
+    _results.endpointscount++;
   }
 
-  RESULTS.calls++;
+  _results.calls++;
 
   var i=0;
 
   while ( i<test.asserts.length && test.asserts[i].result ){
-    RESULTS.asserts++;
+    _results.asserts++;
     i++;
   }
 
   if ( i<test.asserts.length && !test.asserts[i].result ){
-    RESULTS.success = false;
+    _results.success = false;
   }
 
 }
@@ -68,8 +75,7 @@ function runTestPlan(plan, output, next){
   var j=0;
 
   if( plan.prepare ){
-    /*jshint validthis:true */
-    plan.prepare.call(this);
+    plan.prepare.call(null, plan);
   }
 
   output.begin( plan );
@@ -77,10 +83,10 @@ function runTestPlan(plan, output, next){
   runTest(plan, j, output, function(){
     
     output.end( plan );
-    output.stats( RESULTS );
+    output.stats( _results );
 
     if( plan.clean ){
-      plan.clean.call(this);
+      plan.clean.call(null, plan);
     }
 
     if( next ){
@@ -96,8 +102,8 @@ function runTest(plan, pointer, output, finalCallback){
 
   var test = plan.tests[pointer];
 
-  if ( typeof(test.data) === 'function'){
-    test.data = test.data();
+  if ( typeof(test.body) === 'function'){
+    test.body = test.body();
   }
 
   if ( typeof(test.uri) === 'function'){
@@ -108,7 +114,11 @@ function runTest(plan, pointer, output, finalCallback){
     test.multipart = test.multipart();
   }
 
-  if( !test.waitBefore ){
+  if ( typeof(test.headers) === 'function'){
+    test.headers = test.headers();
+  }
+
+  if( !test.waitBefore ){ 
     test.waitBefore = 0;
   }
 
@@ -163,8 +173,12 @@ function executeHTTPTest( plan, test, pointer, output, callback, finalCallback )
     params.method = test.method;
   }
 
-  if( test.data ){
-    params.form = test.data;
+  if( test.body ){
+    if (typeof(test.body) == "object" ) {
+      params.form = test.body;  
+    } else if (typeof(test.body) === "string"){
+      params.body = test.body;
+    }
   }
 
   if ( test.headers ){
@@ -203,6 +217,9 @@ function executeHTTPTest( plan, test, pointer, output, callback, finalCallback )
 
     if( ! test.pass ){
       output.end( plan );
+      if (plan.clean){
+        plan.clean.call(null, plan);
+      }
       return false;
     }
 
@@ -211,7 +228,7 @@ function executeHTTPTest( plan, test, pointer, output, callback, finalCallback )
       store(test, body);
     }
     
-    saveResults(test);
+    save_results(test);
 
     pointer++;
 
