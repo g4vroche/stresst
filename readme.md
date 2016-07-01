@@ -2,7 +2,7 @@
 
 
 
-A lightweight functionnal test tool for REST APIs, allowing reuse of responses data.
+A lightweight yet powerful functionnal test tool for REST APIs and more
 
 
 
