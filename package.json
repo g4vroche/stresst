@@ -1,14 +1,15 @@
 {
   "name": "stresst",
   "description": "A lightweight yet powerful functionnal test tool for REST APIs and more",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "private": false,
+  "main": "index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/g4vroche/stresst.git"
   },
   "scripts": {
-    "start": "node test.js"
+    "start": "index.js"
   },
   "bin": {
     "stresst": "./bin/stresst"
