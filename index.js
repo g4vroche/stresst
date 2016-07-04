@@ -1,3 +1,3 @@
-"use strict"
+"use strict";
 
-module.export = require("./lib/stresst.js")
+module.exports = require("./lib/stresst.js")
