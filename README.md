@@ -194,6 +194,26 @@ exports.suite = {
 }
 ```
 
+##### Advanced data storage
+
+You may want to store data from something else than the response body, for example from the response headers or to transform the data before storing it.
+
+For those cases, you need to delare a function as value of the `src` key of the `store` object. 
+The function receives the response as parameter.
+
+**Example**
+```javascript
+
+store: {
+  dest: "foo",
+  src: function(response){
+    var data = JSON.parse(response.body);
+    return data.someProperty.toLowerCase() + response.headers["X-Why-Would-You-Do-that"];
+  }
+}
+
+```
+
 
 ## Instalation
 
