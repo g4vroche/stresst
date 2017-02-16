@@ -34,6 +34,13 @@ var suite = {
         {test: test.if.selectorValueIs($ => $('.foo').text(), 'bar')},
       ],
     },
+    {
+      method: 'GET',
+      uri: '/complex',
+      asserts: [
+        {test: test.if.greaterThan('fiz.boo.0', 41)}
+      ]
+    }
   ],
 };
 
