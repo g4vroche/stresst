@@ -1,7 +1,7 @@
 {
   "name": "stresst",
   "description": "A lightweight yet powerful functionnal test tool for REST APIs and more",
-  "version": "1.2.6",
+  "version": "1.2.7",
   "private": false,
   "main": "index.js",
   "repository": {
